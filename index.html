@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Agenda</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,100&display=swap");
+
+      body {
+        background: rgb(148, 229, 232);
+        background: radial-gradient(
+          circle,
+          rgba(148, 229, 232, 1) 0%,
+          rgba(66, 58, 58, 1) 100%
+        );
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        font-family: "Roboto", sans-serif;
+      }
+
+      .board {
+        background-color: rgba(255, 255, 255, 0.7);
+        width: 320px;
+        margin: 4px;
+        display: flex;
+        flex-direction: column;
+      }
+      h3 {
+        background-color: #d3d3d3;
+        margin: 0px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 400;
+      }
+
+      .add-card {
+        background-color: rgba(200, 200, 200, 0.5);
+        margin: 4px;
+        border-radius: 3px;
+      }
+
+      .add-card:hover {
+        cursor: pointer;
+      }
+
+      li:hover {
+        cursor: move;
+      }
+
+      .add-card p {
+        font-size: 16px;
+        padding: 0 6px;
+      }
+
+      ul {
+        list-style-type: none;
+        min-height: 400px;
+        padding: 2px;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+      }
+
+      li {
+        background-color: white;
+        box-shadow: 4px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        min-width: 100px;
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        margin: 4px 10px;
+        padding: 10px;
+        align-items: center;
+      }
+
+      .remove {
+        border-radius: 100px;
+        width: 16px;
+        height: 16px;
+        text-align: center;
+        font-size: 13px;
+      }
+
+      .remove:hover {
+        cursor: pointer;
+        background-color: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <h3>Segunda</h3>
+      <ul id="ToDo1"></ul>
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+    <div class="board">
+      <h3>Terça</h3>
+      <ul id="ToDo2"></ul>
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+    <div class="board">
+      <h3>Quarta</h3>
+
+      <ul id="ToDo3"></ul>
+
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+    <div class="board">
+      <h3>Quinta</h3>
+      <ul id="ToDo4"></ul>
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+    <div class="board">
+      <h3>Sexta</h3>
+      <ul id="ToDo5"></ul>
+
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+    <div class="board">
+      <h3>Sabado</h3>
+      <ul id="ToDo6"></ul>
+
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+    <div class="board">
+      <h3>Domingo</h3>
+
+      <ul id="ToDo7"></ul>
+
+      <div class="add-card" onclick="addCard(this)">
+        <p>Adicionar tarefa</p>
+      </div>
+    </div>
+
+    <script>
+      function localStorageGet() {
+        var myLocalStorage = JSON.parse(localStorage.getItem("boards"));
+        // console.log(myLocalStorage);
+        for (const [key, value] of Object.entries(myLocalStorage)) {
+          console.log(decodeURI(decodeURIComponent(value)));
+
+          document.getElementById(key).innerHTML = decodeURIComponent(
+            value
+          ).replace(/"/g, "");
+        }
+      }
+      function addCard(elemento) {
+        const ulId = elemento.previousElementSibling.id;
+        const text = prompt("Qual é a tarefa?");
+        const board = document.getElementById(ulId);
+        var id = new Date().getTime();
+        const template = `<li id="${id}">
+          <p>${text}</p>
+          <p class="remove" onclick="remove(${id},'${ulId}')">x</p>
+        </li>`;
+        board.innerHTML = board.innerHTML + template;
+
+        var myLocalStorage = JSON.parse(localStorage.getItem("boards"));
+        var task = {};
+        task[ulId] = JSON.stringify(encodeURIComponent(board.innerHTML));
+        console.log(board);
+        var joinLoc = { ...myLocalStorage, ...task };
+
+        localStorage.setItem("boards", JSON.stringify(joinLoc));
+      }
+
+      function remove(elemento, ulId) {
+        const liname = document.getElementById(elemento).children;
+        console.log(ulId);
+
+        if (window.confirm(`Deseja apagar o evento ${liname[0].innerHTML}?`)) {
+          const board = document.getElementById(ulId);
+          const li = document.getElementById(elemento);
+
+          li.remove();
+          var task = {};
+          task[ulId] = JSON.stringify(encodeURIComponent(board.innerHTML));
+          var joinLoc = task;
+
+          localStorage.setItem("boards", JSON.stringify(joinLoc));
+        }
+      }
+
+      localStorageGet();
+    </script>
+  </body>
+</html>
